@@ -2,10 +2,11 @@
 
 import os
 import hashlib
-import cPickle
 import time
 import base64
 import inspect
+
+import six
 
 __all__ = ["CacheError", "FSCache", "make_digest",
            "auto_cache_function", "cache_function", "to_seconds"]
@@ -141,7 +142,7 @@ class FSCache(object):
       self._lifetime = to_seconds(**kwargs)
       if self._lifetime <= 0:
         msg = "Lifetime (%s seconds) is 0 or less." % self._lifetime
-        raise LifetimeError, msg
+        raise LifetimeError(msg)
     else:
       self._lifetime = None
     self._loaded = {}
@@ -174,7 +175,7 @@ class FSCache(object):
       tmplt = ("Object for key `%s` exists\n." +
                "Remove the old one before setting the new object.")
       msg = tmplt % str(k)
-      raise CacheError, msg
+      raise CacheError(msg)
     else:
       expiry = self.expiry()
       contents = CacheObject(v, expiration=expiry)
@@ -193,7 +194,7 @@ class FSCache(object):
       del(self._loaded[digest])
     else:
       msg = "Object for key `%s` has not been loaded" % str(k)
-      raise CacheError, msg
+      raise CacheError(msg)
   def __contains__(self, k):
     """
     Returns ``True`` if an object keyed by `k` is
@@ -247,7 +248,7 @@ class FSCache(object):
       contents = load(path)
     else:
       msg = "Object for key `%s` does not exist." % (k,)
-      raise CacheError, msg
+      raise CacheError(msg)
     self._loaded[digest] = contents
     return contents
   def _remove(self, k):
@@ -263,7 +264,7 @@ class FSCache(object):
       os.remove(path)
     else:
       msg = "No object for key `%s` stored." % str(k)
-      raise CacheError, msg
+      raise CacheError(msg)
   def is_loaded(self, k):
     """
     Returns ``True`` if the item keyed by `k` has been loaded,
@@ -380,10 +381,13 @@ def make_digest(k):
   >>> make_digest(adict)
   'a2VKynHgDrUIm17r6BQ5QcA5XVmqpNBmiKbZ9kTu0A'
   """
-  s = cPickle.dumps(k)
+  s = six.moves.cPickle.dumps(k)
   h = hashlib.sha256(s).digest()
   b64 = base64.urlsafe_b64encode(h)[:-2]
-  return b64.replace('-', '=')
+  if six.PY3:
+    return b64.hex()
+  else:
+    return b64.replace('-', '=')
 
 def load(filename):
   """
@@ -391,7 +395,7 @@ def load(filename):
   from the file named by `filename`.
   """
   f = open(filename, 'rb')
-  obj = cPickle.load(f)
+  obj = six.moves.cPickle.load(f)
   f.close()
   return obj
 
@@ -401,7 +405,7 @@ def dump(obj, filename):
   into the file named by `filename`.
   """
   f = open(filename, 'wb')
-  cPickle.dump(obj, f, cPickle.HIGHEST_PROTOCOL)
+  six.moves.cPickle.dump(obj, f, six.moves.cPickle.HIGHEST_PROTOCOL)
   f.close()
 
 def auto_cache_function(f, cache):

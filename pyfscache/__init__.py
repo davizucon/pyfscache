@@ -5,9 +5,9 @@ pyfscache: A file system cache for python.
 Copyright (c) 2013, James C. Stroud; All rights reserved.
 '''
 
-from _version import __version__
+from ._version import __version__
 
-from fscache import *
+from .fscache import *
 import tests
 
 __all__ = ["FSCache", "make_digest",

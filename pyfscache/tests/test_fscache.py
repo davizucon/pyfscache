@@ -3,6 +3,7 @@ import time
 import shutil
 import unittest
 
+import six
 
 from pyfscache.fscache import *
 from pyfscache.fscache import LifetimeError
@@ -30,8 +31,12 @@ class FSCacheTestCase(unittest.TestCase):
     self.f = FSCache(self.path_name)
     self.x = FSCache(self.path_name, seconds=0.3)
     self.f.purge()
-    self.names = ['ETajeDeuWH9cB2alMEOUaBPQ2by_gf_IMb=gU5B3Tz',
-                  'zGa=5yeyE6wYkE9pVICruCO_JG5cBjWYNJNOPZnXQa']
+    if six.PY3:
+      self.names = [ '3376354c33565559664c536457476643424477517179746970486c3132784462556869496d586d514b4f',
+                     '545763716e626556384242645532596d7a526b4d4b4f305a6e4d6a52526549306e6c5258395f39764f4c']
+    else:
+      self.names = ['ETajeDeuWH9cB2alMEOUaBPQ2by_gf_IMb=gU5B3Tz',
+                    'zGa=5yeyE6wYkE9pVICruCO_JG5cBjWYNJNOPZnXQa']
     self.names.sort()
     self.first = 'abcd'
     self.second = 'efgh'
@@ -76,7 +81,7 @@ class FSCacheTestCase(unittest.TestCase):
     self.assertTrue(1 in self.f)
   def test_009_clear_load(self):
     self.f.clear()
-    self.assertEquals(self.f.get_loaded(), [])
+    self.assertEquals(len(self.f.get_loaded()), 0)
     self.assertEquals(sorted(self.f.get_names()), self.names)
     self.f.load(1)
     self.assertTrue(self.f.is_loaded(1))
@@ -93,7 +98,10 @@ class FSCacheTestCase(unittest.TestCase):
     self.assertRaises(LifetimeError, FSCache,
                       self.path_name, seconds=180, minutes=-3)
   def test_100_make_key(self):
-    digest = 'a2VKynHgDrUIm17r6BQ5QcA5XVmqpNBmiKbZ9kTu0A'
+    if six.PY3:
+      digest = '2d5567503677774f636f6e73657a324e4673426d4b6b4d573679476e52637538584f4b66304856657131'
+    else:
+      digest = 'a2VKynHgDrUIm17r6BQ5QcA5XVmqpNBmiKbZ9kTu0A'
     adict = {'a' : {'b':1}, 'f': []}
     self.assertEquals(make_digest(adict), digest)
   def test_101_cache_function(self):

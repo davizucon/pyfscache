@@ -2,12 +2,14 @@
 
 import os
 
-from StringIO import StringIO
-from ConfigParser import ConfigParser
 from setuptools import setup, find_packages
 
 # avoid sectionlesslessness (& case insensitivity) of ConfigParser
 # https://bugs.python.org/issue22253
+
+from six.moves import StringIO
+from six.moves.configparser import ConfigParser
+
 config_IO = StringIO()
 config_IO.write("[main]\n")
 with open("PackageInfo.cfg") as f:
@@ -34,5 +36,11 @@ setup(name = info['PACKAGE'],
       classifiers = [
             'Programming Language :: Python :: 2.5',
             'Programming Language :: Python :: 2.6',
-            'Programming Language :: Python :: 2.7', ],
+            'Programming Language :: Python :: 2.7',
+            'Programming Language :: Python :: 3.5',
+            'Programming Language :: Python :: 3.6',
+      ],
+      install_requires=[
+            'six',
+      ],
       )
