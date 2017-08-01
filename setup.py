@@ -7,10 +7,10 @@ from setuptools import setup, find_packages
 # avoid sectionlesslessness (& case insensitivity) of ConfigParser
 # https://bugs.python.org/issue22253
 
-from six.moves import StringIO
-from six.moves.configparser import ConfigParser
+from six.moves import cStringIO
+from six.moves.configparser import SafeConfigParser as ConfigParser
 
-config_IO = StringIO()
+config_IO = cStringIO()
 config_IO.write("[main]\n")
 with open("PackageInfo.cfg") as f:
   config_IO.write(f.read())
