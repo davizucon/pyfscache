@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 # avoid sectionlesslessness (& case insensitivity) of ConfigParser
 # https://bugs.python.org/issue22253
 
-from six.moves import cStringIO
+from six.moves import StringIO
 from six.moves.configparser import SafeConfigParser as ConfigParser
 
 config_IO = cStringIO()
