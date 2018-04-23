@@ -1,5 +1,4 @@
 from unittest import TestSuite
-
 import test_fscache
 
 def test_suite():

@@ -41,7 +41,7 @@ setup(name=info['PACKAGE'],
       packages=find_packages(),
       package_data={'': [os.path.join('*', '*.*')]},
       include_package_data=True,
-      # requires = [],
+      requires=['six'],
       test_suite=info['PACKAGE'] + '.tests.test_suite',
       classifiers=[
           'Programming Language :: Python :: 2.5',

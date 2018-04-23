@@ -1,5 +1,5 @@
 # make environment
-PYTHON = /usr/local/bin/python
+PYTHON = python
 ECHO = echo
 
 # directories
